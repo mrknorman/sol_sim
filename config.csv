@@ -1,0 +1,2 @@
+Config,Number Of Bodies,Input Filename,Precision,Output Filename,Time Steps,Max Time,Ring Assigned,Assigned Angle,Num_Ejecta,Ring Radius,Ring Velocity,Target
+Value,6,solar_system_obj_no_moon.csv,7,csim,315576,31557600,2,0,36,621000000,3000,3
