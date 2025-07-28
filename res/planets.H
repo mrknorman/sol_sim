@@ -1,73 +1,77 @@
-#define NUM_PLANETS 10
-#define MAX_NAME_LEN 32
+#include "units.h"
+#include "vectors.h"
+
+#ifndef PLANETS
+#define PLANETS
+
+#define NUM_ATTRACTORS 10
+#define MAX_NAME_LENGTH 32
+
+typedef length_v(NUM_ATTRACTORS) attractor_positions_t;
 
 typedef struct {
-    length_t x_position[NUM_PLANETS];
-    length_t y_position[NUM_PLANETS];
-    length_t z_position[NUM_PLANETS];
-    velocity_t x_velocity[NUM_PLANETS];
-    velocity_t y_velocity[NUM_PLANETS];
-    velocity_t z_velocity[NUM_PLANETS];
-    mass_t mass[NUM_PLANETS];
-} planets_t;
+    attractor_positions_t position;
+    velocity_v(NUM_ATTRACTORS) velocity;
+    momentum_v(NUM_ATTRACTORS) momentum;
+    length_t radius[NUM_ATTRACTORS];
+    mass_t mass[NUM_ATTRACTORS];
+} bodies_t;
 
-planets_t solar_system = {
-    .planets = {
-        {
-            .name = "Sun",
-            .mass = {1.9885e30},
-            .radius = {695700000},
-            .position = {{0}, {0}, {0}},
-            .velocity = {{0}, {-14.2451}, {-0.3044}},
-            .momentum = {{0}, {-2.832638941798e31}, {-6.0538262806e29}}
+const bodies_t solar_system = {
+    /* --- Positions (m) --------------------------------------------------- */
+
+    .position = {
+        .x = {
+            {0.0}, {4.600e10}, {1.0748e11}, {1.4709e11}, {1.47366e11},
+            {2.0662e11}, {7.4052e11},
+            {1.357554e12}, {2.732696e12}, {4.47105e12}
         },
-        {
-            .name = "Mercury",
-            .mass = {3.3011e23},
-            .radius = {2439700},
-            .position = {{4.6e10}, {0}, {0}},
-            .velocity = {{0}, {58540}, {7188}},
-            .momentum = {{0}, {1.93246394e28}, {2.37283068e27}}
+        .y = { {0},{0},{0},{0},{0},{0},{0},{0},{0},{0} },
+        .z = { {0},{0},{0},{0},{0},{0},{0},{0},{0},{0} },
+    },
+    
+    /* --- Velocities (m s‑¹) --------------------------------------------- */
+    .velocity = {
+        .x = { {0},{0},{0},{0},{0},{0},{0},{0},{0},{0} },
+        .y = {
+            {-14.245104}, {58540.0}, {35200.0}, {30290.0}, {30362.0},
+            {26386.0}, {14717.0},
+            {10140.0}, {7130.0}, {5470.0}
         },
-        {
-            .name = "Venus",
-            .mass = {4.8675e24},
-            .radius = {6051800},
-            .position = {{1.0748e11}, {0}, {0}},
-            .velocity = {{0}, {35200}, {2085}},
-            .momentum = {{0}, {1.71336e29}, {1.01487375e28}}
+        .z = {
+            {-0.304442}, {7188.0}, {2085.0}, {0.0}, {1076.0},
+            {852.0}, {312.0},
+            {0.0}, {0.0}, {0.0}
         },
-        {
-            .name = "Earth",
-            .mass = {5.9724e24},
-            .radius = {6378100},
-            .position = {{1.4709e11}, {0}, {0}},
-            .velocity = {{0}, {30290}, {0}},
-            .momentum = {{0}, {1.80903996e29}, {0}}
+    },
+
+    /* --- Momenta (kg m s‑¹) --------------------------------------------- */
+    .momentum = {
+        .x = { {0},{0},{0},{0},{0},{0},{0},{0},{0},{0} },
+        .y = {
+            {-2.83263894e31}, {1.93246394e28}, {1.71336e29},
+            {1.80903996e29}, {2.23039252e27}, {1.693216006e28},
+            {2.793566223e31},
+            {5.7627648e30}, {6.1896243e29}, {5.6017723e29}
         },
-        {
-            .name = "Moon",
-            .mass = {7.346e22},
-            .radius = {1738100},
-            .position = {{1.47366e11}, {0}, {0}},
-            .velocity = {{0}, {30362}, {1076}},
-            .momentum = {{0}, {2.23039252e27}, {7.904296e25}}
+        .z= {
+            {-6.05382628e29}, {2.37283068e27}, {1.01487375e28},
+            {0.0}, {7.904296e25}, {5.4673692e26}, {5.9223528e29},
+            {0.0}, {0.0}, {0.0}
         },
-        {
-            .name = "Mars",
-            .mass = {6.4171e23},
-            .radius = {3396200},
-            .position = {{2.0662e11}, {0}, {0}},
-            .velocity = {{0}, {26386}, {852}},
-            .momentum = {{0}, {1.693216006e28}, {5.4673692e26}}
-        },
-        {
-            .name = "Jupiter",
-            .mass = {1.89819e27},
-            .radius = {66854000},
-            .position = {{7.4052e11}, {0}, {0}},
-            .velocity = {{0}, {14717}, {312}},
-            .momentum = {{0}, {2.793566223e31}, {5.9223528e29}}
-        }
+    },
+
+    /* --- Radii (m) ------------------------------------------------------- */
+    .radius = {
+        {6.957e8},  {2.4397e6}, {6.0518e6}, {6.3781e6}, {1.7381e6},
+        {3.3962e6}, {6.6854e7}, {5.4364e7}, {2.4973e7}, {2.4341e7}
+    },
+
+    /* --- Masses (kg) ----------------------------------------------------- */
+    .mass = {
+        {1.9885e30}, {3.3011e23}, {4.8675e24}, {5.9724e24}, {7.346e22},
+        {6.4171e23}, {1.89819e27}, {5.6832e26}, {8.6811e25}, {1.02409e26}
     }
 };
+#endif
+
