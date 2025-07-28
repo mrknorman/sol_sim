@@ -10,8 +10,6 @@
 #include <stdbool.h>
 #include <inttypes.h>
 #include <immintrin.h>
-#include <GL/glew.h>
-#include <GL/glut.h>
 
 #define G 6.67e-11
 #define RAND_64_MAX ~(0ULL)
