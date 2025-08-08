@@ -1,37 +1,38 @@
 #include <stddef.h>
-#include <math.h>
-
 
 #include "units.h"
 #include "planets.h"
 #include "vectors.h"
 #include "constants.h"
 
-three_acceleration gravitational_acceleration(
-    const three_position position,
-    const mass_t *attractor_masses,
-    const attractor_positions_t attractor_positions
-) {
+static inline __attribute__((always_inline, const))
+three_acceleration calculate_gravitational_acceleration(
+    const three_position                  position,
+    const mass_t                *restrict attractor_masses,
+    const attractor_positions_t           attractor_positions)   /* ← pointer + restrict */
+{
     three_acceleration acceleration = THREE_ZERO;
 
-    for (size_t i = 0; i < NUM_ATTRACTORS; i++) {
-        // Δx = attractor.x - position.x
-        const double dx = attractor_positions.x[i].meters - position.x[0].meters;
-        const double dy = attractor_positions.y[i].meters - position.y[0].meters;
-        const double dz = attractor_positions.z[i].meters - position.z[0].meters;
+    #pragma clang loop vectorize(enable)
+    #pragma clang loop unroll(disable)
+    for (size_t attractor_index = 0; attractor_index < NUM_ATTRACTORS; ++attractor_index) {
 
-        const double r_squared = dx * dx + dy * dy + dz * dz;
-        if (r_squared == 0.0) continue;
+        three_position displacement_vector = three_position_subtract(
+            (three_position) EXTRACT_VEC(attractor_positions, attractor_index),
+            position
+        );
 
-		const double r = sqrt(r_squared);
+        length_t distance = three_vector_length(displacement_vector);
+        if (distance.value == 0) continue;
 
-        // Acceleration magnitude: a = G * m / r^2
-        const double a_mag = GRAVITAIONAL_CONSTANT * attractor_masses[i].kilograms / r_squared;
+        inv_length_t inv_distance = inv_length(distance); // 1/r
+        inv_length_cubed_t inv_distance_cubed = inv_length_cubed(inv_distance); // 1/r^3
 
-        // Normalize direction and scale
-        acceleration.x[0].meters_per_second_squared += a_mag * dx / r;
-        acceleration.y[0].meters_per_second_squared += a_mag * dy / r;
-        acceleration.z[0].meters_per_second_squared += a_mag * dz / r;
+        double scale = convert_units.G_code  * attractor_masses[attractor_index].value * inv_distance_cubed.value;
+        
+        acceleration.x[0].value += scale * displacement_vector.x[0].value;
+        acceleration.y[0].value += scale * displacement_vector.y[0].value;
+        acceleration.z[0].value += scale * displacement_vector.z[0].value;
     }
 
     return acceleration;

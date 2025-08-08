@@ -17,41 +17,41 @@
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-void get_arg(double* val)
+void get_arg(double* value)
 {
 	char* t = strtok(NULL, ",");
-	*val = atof(t);
+	*value = atof(t);
 }
 
-void get_argf(double *val)
+void get_argf(double *value)
 {
 	char* t = strtok(NULL, ",");
-	*val = atof(t);
+	*value = atof(t);
 }
 
-void get_args(char **val)
+void get_args(char **value)
 {
 	char* t = strtok(NULL, ",");
-	*val = t;
+	*value = t;
 }
 
-void get_argi(int *val)
+void get_argi(int *value)
 {
 	char* t = strtok(NULL, ",");
-	*val = atoi(t);
+	*value = atoi(t);
 }
 
-void get_argzu(size_t *val)
+void get_argzu(size_t *value)
 {
 	char* t = strtok(NULL, ",");
-	*val = atoi(t);
+	*value = atoi(t);
 }
 
 uint64_t rand_64()
 {
-    unsigned long long val;
-    while(!_rdrand64_step(&val));
-    return (uint64_t)val;
+    unsigned long long value;
+    while(!_rdrand64_step(&value));
+    return (uint64_t)value;
 }
 
 void readConfig(char* filename, size_t* input_bodies, char** input_filename, int* prec, char** output_filename, int* time_steps, double* max_time, size_t* ring_assigned, double* assigned_angle, size_t* ring_bodies, 

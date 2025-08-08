@@ -8,16 +8,19 @@
 #define MAX_NAME_LENGTH 32
 
 typedef length_v(NUM_ATTRACTORS) attractor_positions_t;
+typedef acceleration_v(NUM_ATTRACTORS) attractor_accelerations_t;
+
 
 typedef struct {
     attractor_positions_t position;
     velocity_v(NUM_ATTRACTORS) velocity;
+    attractor_accelerations_t acceleration;
     momentum_v(NUM_ATTRACTORS) momentum;
     length_t radius[NUM_ATTRACTORS];
     mass_t mass[NUM_ATTRACTORS];
 } bodies_t;
 
-const bodies_t solar_system = {
+const bodies_t initial_solar_system = {
     /* --- Positions (m) --------------------------------------------------- */
 
     .position = {
@@ -43,6 +46,23 @@ const bodies_t solar_system = {
             {852.0}, {312.0},
             {0.0}, {0.0}, {0.0}
         },
+    },
+
+    .acceleration = {
+    .x = {
+            {  3.109196785e-07 },   /* Sun    */
+            { -6.272097434e-02 },   /* Mercury */
+            { -1.148823801e-02 },   /* Venus   */
+            { -6.069747095e-03 },   /* Earth   */
+            { -1.134397873e-02 },   /* Moon    */
+            { -3.108429186e-03 },   /* Mars    */
+            { -2.419241834e-04 },   /* Jupiter */
+            { -7.234354243e-05 },   /* Saturn  */
+            { -1.782234242e-05 },   /* Uranus  */
+            { -6.654122541e-06 }    /* Neptune */
+        },
+        .y = { {0},{0},{0},{0},{0},{0},{0},{0},{0},{0} },
+        .z = { {0},{0},{0},{0},{0},{0},{0},{0},{0},{0} },
     },
 
     /* --- Momenta (kg m s‑¹) --------------------------------------------- */
