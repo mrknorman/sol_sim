@@ -41,15 +41,7 @@ typedef acceleration_v(1) three_acceleration;
     }
 
 /* Add the (x,y,z)[0] components of SRC to DEST[IDX] ------------------- */
-#define ADD_LENGTH_VEC(DEST, IDX, SRC)             \
-    do {                                              \
-        (DEST).x[(IDX)].value += (SRC).x[0].value;  \
-        (DEST).y[(IDX)].value += (SRC).y[0].value;  \
-        (DEST).z[(IDX)].value += (SRC).z[0].value;  \
-    } while (0)
-
-/* Add the (x,y,z)[0] components of SRC to DEST[IDX] ------------------- */
-#define ADD_VELOCITY_VEC(DEST, IDX, SRC)             \
+#define ADD_VEC(DEST, IDX, SRC)             \
     do {                                              \
         (DEST).x[(IDX)].value += (SRC).x[0].value;  \
         (DEST).y[(IDX)].value += (SRC).y[0].value;  \

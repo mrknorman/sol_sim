@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
                     (three_acceleration) EXTRACT_VEC(solar_system.acceleration, attractor_index),
                     TIME_STEP_DURATION
                 );
-                ADD_LENGTH_VEC(solar_system.position, attractor_index, additional_distance);
+                ADD_VEC(solar_system.position, attractor_index, additional_distance);
             }
 
             #pragma omp for simd schedule(static)
@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
                     (three_acceleration) EXTRACT_VEC(current_acceleration, attractor_index),
                     TIME_STEP_DURATION
                 );
-                ADD_VELOCITY_VEC(solar_system.velocity, attractor_index, additional_velocity);
+                ADD_VEC(solar_system.velocity, attractor_index, additional_velocity);
 
                 COPY_VEC(solar_system.acceleration, attractor_index, current_acceleration);
             }
