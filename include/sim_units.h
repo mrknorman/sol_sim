@@ -3,76 +3,58 @@
 #ifndef SIM_UNITS_H
 #define SIM_UNITS_H
 
-#define AU_METERS              1.495978707e11        /* 1 AU      [m] */
-#define MSUN_KG                1.98847e30            /* 1 M☉      [kg] */
-#define SIDEREAL_YEAR_SECONDS  31558149.7635456      /* 1 yr      [s] */
-#define G_CODE   (GRAVITATIONAL_CONSTANT * MSUN_KG * \
-                  SIDEREAL_YEAR_SECONDS * SIDEREAL_YEAR_SECONDS / \
-                  (AU_METERS * AU_METERS * AU_METERS))             /* ≈ 4π² */
+// Astronomical constants
+#define AU_METERS              1.495978707e11        // 1 AU      [m]
+#define SOLAR_MASS_KG          1.98847e30            // 1 M☉      [kg]
+#define SIDEREAL_YEAR_SECONDS  31558149.7635456      // 1 yr      [s]
 
-typedef struct {
-    double L_to_SI,  L_from_SI;
-    double M_to_SI,  M_from_SI;
-    double T_to_SI,  T_from_SI;
-    double G_code;
-} unit_system_t;
+// Conversion factors (direct constants for simplicity)
+#define METERS_TO_AU           (1.0 / AU_METERS)
+#define KG_TO_SOLAR_MASS       (1.0 / SOLAR_MASS_KG)
+#define SECONDS_TO_YEAR        (1.0 / SIDEREAL_YEAR_SECONDS)
 
-const unit_system_t convert_units = {
-    .L_to_SI = AU_METERS,
-    .L_from_SI = 1.0 / AU_METERS,
+// Derived conversion factors
+#define METERS_PER_SECOND_TO_AU_PER_YEAR     (METERS_TO_AU / SECONDS_TO_YEAR)
+#define METERS_PER_SECOND_SQUARED_TO_AU_PER_YEAR_SQUARED  (METERS_TO_AU / (SECONDS_TO_YEAR * SECONDS_TO_YEAR))
+#define KG_METERS_PER_SECOND_TO_SOLAR_MASS_AU_PER_YEAR   (KG_TO_SOLAR_MASS * METERS_TO_AU / SECONDS_TO_YEAR)
 
-    .M_to_SI = MSUN_KG,
-    .M_from_SI = 1.0 / MSUN_KG,
+// Gravitational constant in code units
+#define GRAVITATIONAL_CONSTANT_CODE   (GRAVITATIONAL_CONSTANT * SOLAR_MASS_KG * \
+                                       SIDEREAL_YEAR_SECONDS * SIDEREAL_YEAR_SECONDS / \
+                                       (AU_METERS * AU_METERS * AU_METERS))             // ≈ 4π²
 
-    .T_to_SI = SIDEREAL_YEAR_SECONDS,
-    .T_from_SI = 1.0 / SIDEREAL_YEAR_SECONDS,
+// Optional sanity check at compile-time (C11)
+_Static_assert(GRAVITATIONAL_CONSTANT_CODE > 39.47 && GRAVITATIONAL_CONSTANT_CODE < 39.49, "Gravitational constant code out of range");
 
-    .G_code  = G_CODE
-};
-
-/* Optional sanity check at compile-time (C11) */
-_Static_assert(G_CODE > 39.47 && G_CODE < 39.49, "G_code out of range");
-
-static inline void convert_bodies_to_sim_units(
-	bodies_t       *dst,
-	const bodies_t *src
+static inline void convert_bodies_to_astronomical_units(
+    bodies_t       *destination,
+    const bodies_t *source
 ) {
-    const double L = convert_units.L_from_SI;                       /* 1 / AU */
-    const double T = convert_units.T_from_SI;                       /* 1 / yr */
-    const double M = convert_units.M_from_SI;                       /* 1 / M☉ */
-
-	const double Vfac = L / T;            /* (m/s) → AU/yr   */
-	const double Afac = L / (T * T);      /* m/s² → AU/yr²   */
-	const double Pfac = M * L / T;        /* kg·m/s → M☉·AU/yr */
-    const double Rfac   = L;                /* m → AU          */
-
     for (size_t i = 0; i < NUM_ATTRACTORS; ++i) {
-        /* positions ---------------------------------------------------- */
-        dst->position.x[i].value = src->position.x[i].value * L;
-        dst->position.y[i].value = src->position.y[i].value * L;
-        dst->position.z[i].value = src->position.z[i].value * L;
+        // positions ----------------------------------------------------
+        destination->position.x[i].value = source->position.x[i].value * METERS_TO_AU;
+        destination->position.y[i].value = source->position.y[i].value * METERS_TO_AU;
+        destination->position.z[i].value = source->position.z[i].value * METERS_TO_AU;
 
-        /* velocities --------------------------------------------------- */
-        dst->velocity.x[i].value = src->velocity.x[i].value * Vfac;
-        dst->velocity.y[i].value = src->velocity.y[i].value * Vfac;
-        dst->velocity.z[i].value = src->velocity.z[i].value * Vfac;
+        // velocities ---------------------------------------------------
+        destination->velocity.x[i].value = source->velocity.x[i].value * METERS_PER_SECOND_TO_AU_PER_YEAR;
+        destination->velocity.y[i].value = source->velocity.y[i].value * METERS_PER_SECOND_TO_AU_PER_YEAR;
+        destination->velocity.z[i].value = source->velocity.z[i].value * METERS_PER_SECOND_TO_AU_PER_YEAR;
 
-        /* accelerations ------------------------------------------------ */
-        dst->acceleration.x[i].value = src->acceleration.x[i].value * Afac;
-        dst->acceleration.y[i].value = src->acceleration.y[i].value * Afac;
-        dst->acceleration.z[i].value = src->acceleration.z[i].value * Afac;
+        // accelerations ------------------------------------------------
+        destination->acceleration.x[i].value = source->acceleration.x[i].value * METERS_PER_SECOND_SQUARED_TO_AU_PER_YEAR_SQUARED;
+        destination->acceleration.y[i].value = source->acceleration.y[i].value * METERS_PER_SECOND_SQUARED_TO_AU_PER_YEAR_SQUARED;
+        destination->acceleration.z[i].value = source->acceleration.z[i].value * METERS_PER_SECOND_SQUARED_TO_AU_PER_YEAR_SQUARED;
 
-        /* momenta ------------------------------------------------------ */
-        dst->momentum.x[i].value = src->momentum.x[i].value * Pfac;
-        dst->momentum.y[i].value = src->momentum.y[i].value * Pfac;
-        dst->momentum.z[i].value = src->momentum.z[i].value * Pfac;
+        // momenta ------------------------------------------------------
+        destination->momentum.x[i].value = source->momentum.x[i].value * KG_METERS_PER_SECOND_TO_SOLAR_MASS_AU_PER_YEAR;
+        destination->momentum.y[i].value = source->momentum.y[i].value * KG_METERS_PER_SECOND_TO_SOLAR_MASS_AU_PER_YEAR;
+        destination->momentum.z[i].value = source->momentum.z[i].value * KG_METERS_PER_SECOND_TO_SOLAR_MASS_AU_PER_YEAR;
 
-        /* radii & masses ---------------------------------------------- */
-        dst->radius[i].value = src->radius[i].value * Rfac;
-        dst->mass[i].value   = src->mass[i].value * M;
+        // radii & masses ----------------------------------------------
+        destination->radius[i].value = source->radius[i].value * METERS_TO_AU;
+        destination->mass[i].value = source->mass[i].value * KG_TO_SOLAR_MASS;
     }
 }
-
-
 
 #endif

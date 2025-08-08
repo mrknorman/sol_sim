@@ -26,10 +26,10 @@ time_t TIME_STEP_DURATION;
 
 int main(int argc, char** argv) {
 
-    TIME_STEP_DURATION.value = SECONDS_PER_DAY * convert_units.T_from_SI;
+    TIME_STEP_DURATION.value = SECONDS_PER_DAY * SECONDS_TO_YEAR;
 
     bodies_t solar_system;
-    convert_bodies_to_sim_units(&solar_system, &initial_solar_system);
+    convert_bodies_to_astronomical_units(&solar_system, &initial_solar_system);
 
     attractor_accelerations_t current_acceleration;
 

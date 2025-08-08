@@ -28,7 +28,7 @@ three_acceleration calculate_gravitational_acceleration(
         inv_length_t inv_distance = inv_length(distance); // 1/r
         inv_length_cubed_t inv_distance_cubed = inv_length_cubed(inv_distance); // 1/r^3
 
-        double scale = convert_units.G_code  * attractor_masses[attractor_index].value * inv_distance_cubed.value;
+        double scale = GRAVITATIONAL_CONSTANT_CODE  * attractor_masses[attractor_index].value * inv_distance_cubed.value;
         
         acceleration.x[0].value += scale * displacement_vector.x[0].value;
         acceleration.y[0].value += scale * displacement_vector.y[0].value;
