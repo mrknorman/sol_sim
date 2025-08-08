@@ -75,9 +75,6 @@ int main(int argc, char** argv) {
 
             #pragma omp for simd schedule(static)
             for (size_t attractor_index = 0; attractor_index < NUM_ATTRACTORS; attractor_index++) {
-                three_acceleration previous_acceleration = 
-                    (three_acceleration) EXTRACT_VEC(solar_system.acceleration, attractor_index);
-
                 three_velocity additional_velocity = calculate_velocity_verlet(
                     (three_acceleration) EXTRACT_VEC(solar_system.acceleration, attractor_index),
                     (three_acceleration) EXTRACT_VEC(current_acceleration, attractor_index),
@@ -102,7 +99,7 @@ int main(int argc, char** argv) {
                 }
             }
         }
-    }
+    } // Close the parallel region
 
     return 0; 
 }

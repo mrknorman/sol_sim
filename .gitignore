@@ -2,4 +2,6 @@
 *.DS_Store*
 *.out
 *.dSYM/
+__pycache__/
+*.pyc
 *.opt.yaml
